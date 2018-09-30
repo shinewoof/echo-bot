@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('callback', function (\Illuminate\Http\Request $request) {
+Route::post('callback', function (\Illuminate\Http\Request $request) {
     $signature = $request->header(\LINE\LINEBot\Constant\HTTPHeader::LINE_SIGNATURE);
 
     if (empty($signature)) {
