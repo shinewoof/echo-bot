@@ -33,32 +33,7 @@ class LineBotController extends Controller
         if (empty($signature)) {
             return response('Bad Request', 400);
         }
-
-        // Check request with signature and parse request
-        try {
-            $events = $this->bot->parseEventRequest($request->getContent(), $signature);
-        } catch (InvalidSignatureException $e) {
-            return response('Invalid signature', 400);
-        } catch (InvalidEventRequestException $e) {
-            return response("Invalid event request", 400);
-        }
-
-        foreach ($events as $event) {
-            if (!($event instanceof LINEBot\Event\MessageEvent)) {
-                continue;
-            }
-
-            if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\TextMessage)) {
-                continue;
-            }
-
-            if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\LocationMessage)) {
-                continue;
-            }
-
-            $replyText = $event->getText();
-            $this->bot->replyText($event->getReplyToken(), $replyText);
-        }
+        $this->service->replyMessage($request->getContent(), $signature);
 
         return response('OK!', 200);
     }

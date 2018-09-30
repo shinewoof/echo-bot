@@ -15,6 +15,8 @@ use LINE\LINEBot\Constant\HTTPHeader;
 use LINE\LINEBot\Response;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
+use LINE\LINEBot\Exception\InvalidSignatureException;
+use LINE\LINEBot\Exception\InvalidEventRequestException;
 
 class LineBotService
 {
@@ -47,4 +49,32 @@ class LineBotService
         return $request->header(HTTPHeader::LINE_SIGNATURE);
     }
 
+    public function replyMessage($body, $signature)
+    {
+        // Check request with signature and parse request
+        try {
+            $events = $this->lineBot->parseEventRequest($body, $signature);
+        } catch (InvalidSignatureException $e) {
+            return response('Invalid signature', 400);
+        } catch (InvalidEventRequestException $e) {
+            return response("Invalid event request", 400);
+        }
+
+        foreach ($events as $event) {
+            if (!($event instanceof LINEBot\Event\MessageEvent)) {
+                continue;
+            }
+
+            if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\TextMessage)) {
+                continue;
+            }
+
+            if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\LocationMessage)) {
+                continue;
+            }
+
+            $replyText = $event->getText();
+            $this->lineBot->replyText($event->getReplyToken(), $replyText);
+        }
+    }
 }
