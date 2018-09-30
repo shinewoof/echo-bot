@@ -8,8 +8,10 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use LINE\LINEBot;
+use LINE\LINEBot\Constant\HTTPHeader;
 use LINE\LINEBot\Response;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
@@ -38,6 +40,11 @@ class LineBotService
             $content = new TextMessageBuilder($content);
         }
         return $this->lineBot->pushMessage($this->lineUserId, $content);
+    }
+
+    public function resolveSignature(Request $request)
+    {
+        return $request->header(HTTPHeader::LINE_SIGNATURE);
     }
 
 }
