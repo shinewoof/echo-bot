@@ -54,27 +54,31 @@ class LineBotService
         // Check request with signature and parse request
         try {
             $events = $this->lineBot->parseEventRequest($body, $signature);
+
+            foreach ($events as $event) {
+                if (!($event instanceof LINEBot\Event\MessageEvent)) {
+                    continue;
+                }
+
+                if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\TextMessage)) {
+                    continue;
+                }
+
+                if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\LocationMessage)) {
+                    continue;
+                }
+
+                $replyText = $event->getText();
+                $this->lineBot->replyText($event->getReplyToken(), $replyText);
+            }
         } catch (InvalidSignatureException $e) {
             return response('Invalid signature', 400);
         } catch (InvalidEventRequestException $e) {
             return response("Invalid event request", 400);
+        } catch (\ReflectionException $e) {
+            return response($e->getMessage(), 400);
         }
+        return response('OK!', 200);
 
-        foreach ($events as $event) {
-            if (!($event instanceof LINEBot\Event\MessageEvent)) {
-                continue;
-            }
-
-            if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\TextMessage)) {
-                continue;
-            }
-
-            if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\LocationMessage)) {
-                continue;
-            }
-
-            $replyText = $event->getText();
-            $this->lineBot->replyText($event->getReplyToken(), $replyText);
-        }
     }
 }

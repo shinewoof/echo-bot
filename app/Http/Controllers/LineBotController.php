@@ -33,8 +33,6 @@ class LineBotController extends Controller
         if (empty($signature)) {
             return response('Bad Request', 400);
         }
-        $this->service->replyMessage($request->getContent(), $signature);
-
-        return response('OK!', 200);
+        return $this->service->replyMessage($request->getContent(), $signature);
     }
 }
