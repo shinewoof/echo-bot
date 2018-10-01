@@ -12,6 +12,17 @@
 */
 
 Route::get('/', function () {
-   print 'hello world!';
+    $a = new aaa();
+    echo ($a instanceof Closure) ? $a->processed() : "123";
 });
+
+class aaa
+{
+
+    public function processed()
+    {
+        return 'hello world';
+    }
+
+}
 

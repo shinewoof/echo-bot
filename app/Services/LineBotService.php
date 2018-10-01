@@ -21,15 +21,10 @@ use LINE\LINEBot\Exception\InvalidEventRequestException;
 class LineBotService
 {
     protected $lineUserId;
-    /**
-     * @var LINEBot
-     */
-    protected $lineBot;
 
     public function __construct($lineUserId = null)
     {
         $this->lineUserId = $lineUserId ?? config('line.line.LINE_USER_ID');
-        $this->lineBot = App::make(LINEBot::class);
     }
 
     /**
@@ -46,34 +41,33 @@ class LineBotService
 
     public function resolveSignature(Request $request)
     {
-        return $_SERVER['HTTP_' . HTTPHeader::LINE_SIGNATURE];
+        return $request->header(HTTPHeader::LINE_SIGNATURE);
     }
 
-    public function replyMessage($body, $signature)
+    public function replyMessage($callback, Request $request)
     {
-        // Check request with signature and parse request
+        $signature = $this->resolveSignature($request);
+
+        if (empty($signature)) {
+            return response('Bad Request', 400);
+        }
         try {
-            $events = $this->lineBot->parseEventRequest($body, $signature);
+            /**
+             * @var LINEBot $lineBot
+             */
+            $lineBot = App::make('line.bot');
+
+            $events = $lineBot->parseEventRequest($request->getContent(), $signature);
 
             foreach ($events as $event) {
-                if (!($event instanceof LINEBot\Event\MessageEvent)) {
-                    continue;
-                }
-
-                if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\TextMessage)) {
-                    continue;
-                }
-
-                $replyText = $event->getText();
-                $this->lineBot->replyText($event->getReplyToken(), $replyText);
+                $callback->{$event->getType()}($event);
             }
         } catch (InvalidSignatureException $e) {
             return response('Invalid signature', 400);
         } catch (InvalidEventRequestException $e) {
             return response("Invalid event request", 400);
-        } catch (\ReflectionException $e) {
-            return response($e->getMessage(), 400);
         }
+
         return response('OK!', 200);
 
     }
