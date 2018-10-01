@@ -64,10 +64,6 @@ class LineBotService
                     continue;
                 }
 
-                if (!($event instanceof \LINE\LINEBot\Event\MessageEvent\LocationMessage)) {
-                    continue;
-                }
-
                 $replyText = $event->getText();
                 $this->lineBot->replyText($event->getReplyToken(), $replyText);
             }
