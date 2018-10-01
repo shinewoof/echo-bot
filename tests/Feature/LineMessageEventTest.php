@@ -36,7 +36,7 @@ class LineMessageEventTest extends TestCase
 
         $response = $this->call(
             'post',
-            route('line.bot.message'),
+            route('line.bot.message', ['userId' => 'weather']),
             [],
             [],
             [],

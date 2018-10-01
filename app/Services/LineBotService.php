@@ -46,7 +46,7 @@ class LineBotService
 
     public function resolveSignature(Request $request)
     {
-        return $request->header(HTTPHeader::LINE_SIGNATURE);
+        return $_SERVER['HTTP_' . HTTPHeader::LINE_SIGNATURE];
     }
 
     public function replyMessage($body, $signature)
