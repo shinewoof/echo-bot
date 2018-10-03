@@ -178,7 +178,6 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Providers\LineBotProvider::class,
-        App\Services\CallbackManager\Providers\CallbackProvider::class,
     ],
 
     /*
