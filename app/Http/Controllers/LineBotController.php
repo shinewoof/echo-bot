@@ -28,11 +28,19 @@ class LineBotController extends Controller
 
     public function receive(Request $request, $userId)
     {
-        $signature = $this->service->resolveSignature($request);
+        try {
 
-        if (empty($signature)) {
-            return response('Bad Request', 400);
+            $callback = $this->app->make('callback.manager')->getCallback($userId);
+
+            $response = $this->service->replyMessage($callback, $request);
+        } catch (\Exception $e) {
+            var_dump($e->getFile());
+            var_dump($e->getLine());
+            var_dump($e->getMessage());
+
+            $response = response('there are something error!!', 400);
         }
-        return $this->service->replyMessage($request->getContent(), $signature);
+
+        return $response;
     }
 }
