@@ -12,5 +12,5 @@ use LINE\LINEBot\Event\MessageEvent\TextMessage;
 
 interface CallbackContract
 {
-    public function message(TextMessage $event);
+    public function handler();
 }

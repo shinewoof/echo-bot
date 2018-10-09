@@ -8,6 +8,7 @@
 
 namespace App\Services;
 
+use App\Services\CallbackManager\Contracts\CallbackContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use LINE\LINEBot;
@@ -39,14 +40,14 @@ class LineBotService
         return $this->lineBot->pushMessage($this->lineUserId, $content);
     }
 
-    public function resolveSignature(Request $request)
+    public function getSignature(Request $request)
     {
         return $request->header(HTTPHeader::LINE_SIGNATURE);
     }
 
-    public function replyMessage($callback, Request $request)
+    public function replyMessage(CallbackContract $callback, Request $request)
     {
-        $signature = $this->resolveSignature($request);
+        $signature = $this->getSignature($request);
 
         if (empty($signature)) {
             return response('Bad Request', 400);
@@ -55,12 +56,13 @@ class LineBotService
             /**
              * @var LINEBot $lineBot
              */
-            $lineBot = App::make('line.bot');
+            $lineBot = app('line.bot');
 
             $events = $lineBot->parseEventRequest($request->getContent(), $signature);
 
             foreach ($events as $event) {
-                $callback->{$event->getType()}($event);
+                $message = $callback->handler();
+                $message($event, $lineBot);
             }
         } catch (InvalidSignatureException $e) {
             return response('Invalid signature', 400);

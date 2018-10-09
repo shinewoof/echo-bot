@@ -17,16 +17,16 @@ class BaseCallback implements CallbackContract
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->lineBot = $this->app->make(LINEBot::class);
     }
 
     /**
-     * @param TextMessage $event
-     * @throws \ReflectionException
+     * @return \Closure
      */
-    public function message(TextMessage $event)
+    public function handler()
     {
-        $replyText = $event->getText();
-        $this->lineBot->replyText($event->getReplyToken(), $replyText);
+        return function (TextMessage $event, LINEBot $bot) {
+            $replyText = $event->getText();
+            $bot->replyText($event->getReplyToken(), $replyText);
+        };
     }
 }
