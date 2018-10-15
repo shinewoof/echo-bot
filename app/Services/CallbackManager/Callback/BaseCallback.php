@@ -1,7 +1,5 @@
 <?php
-
-namespace App\Services\CallbackManager\CallBack;
-
+namespace App\Services\CallbackManager\Callback;
 
 use App\Services\CallbackManager\Contracts\CallbackContract;
 use Illuminate\Foundation\Application;
@@ -19,7 +17,7 @@ class BaseCallback implements CallbackContract
     }
 
     /**
-     * @return \Closure
+     * @return boolean
      */
     public function message(MessageEvent $event)
     {

@@ -20,21 +20,21 @@ class CallbackProvider extends ServiceProvider
     public function register()
     {
         $this->registerAlias();
-        $this->registerCallBackManager();
+        $this->registerCallbackManager();
     }
 
-    protected function registerCallBackManager()
+    protected function registerCallbackManager()
     {
         $this->app->singleton('callback.manager', function ($app) {
             $manager = new CallbackManager($app);
-            $this->registerCallBack($manager);
+            $this->registerCallback($manager);
             return $manager;
         });
     }
 
     protected function registerCallback(CallbackManager $manager)
     {
-        $manager->addCallBack('weather', WeatherCallback::class);
+        $manager->addCallback('weather', WeatherCallback::class);
     }
 
     protected function registerAlias()

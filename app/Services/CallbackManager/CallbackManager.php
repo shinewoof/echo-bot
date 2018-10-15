@@ -38,7 +38,7 @@ class CallbackManager
      * @param string|Closure $resolver
      * @return $this
      */
-    public function addCallBack($name, $resolver)
+    public function addCallback($name, $resolver)
     {
         $this->resolvers[$name] = $resolver;
         return $this;
@@ -63,7 +63,7 @@ class CallbackManager
      */
     public function getDefaultName()
     {
-        return 'BaseCallBack';
+        return 'BaseCallback';
     }
 
     protected function resolve($name)
