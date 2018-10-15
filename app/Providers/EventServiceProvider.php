@@ -13,8 +13,29 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\Event' => [
-            'App\Listeners\EventListener',
+        'LINE\LINEBot\Event\MessageEvent\AudioMessage' => [
+            'App\Listeners\AudioEventListener',
+        ],
+        'LINE\LINEBot\Event\MessageEvent\FileMessage' => [
+            'App\Listeners\FileEventListener',
+        ],
+        'LINE\LINEBot\Event\MessageEvent\ImageMessage' => [
+            'App\Listeners\ImageEventListener',
+        ],
+        'LINE\LINEBot\Event\MessageEvent\LocationMessage' => [
+            'App\Listeners\LocationEventListener',
+        ],
+        'LINE\LINEBot\Event\MessageEvent\StickerMessage' => [
+            'App\Listeners\StickerEventListener',
+        ],
+        'LINE\LINEBot\Event\MessageEvent\TextMessage' => [
+            'App\Listeners\TextEventListener',
+        ],
+        'LINE\LINEBot\Event\MessageEvent\UnknownMessage' => [
+            'App\Listeners\UnknownEventListener',
+        ],
+        'LINE\LINEBot\Event\MessageEvent\VideoMessage' => [
+            'App\Listeners\VideoEventListener',
         ],
     ];
 

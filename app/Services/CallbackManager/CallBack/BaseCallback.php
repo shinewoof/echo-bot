@@ -5,8 +5,7 @@ namespace App\Services\CallbackManager\CallBack;
 
 use App\Services\CallbackManager\Contracts\CallbackContract;
 use Illuminate\Foundation\Application;
-use LINE\LINEBot;
-use LINE\LINEBot\Event\MessageEvent\TextMessage;
+use LINE\LINEBot\Event\MessageEvent;
 
 class BaseCallback implements CallbackContract
 {
@@ -22,11 +21,9 @@ class BaseCallback implements CallbackContract
     /**
      * @return \Closure
      */
-    public function handler()
+    public function message(MessageEvent $event)
     {
-        return function (TextMessage $event, LINEBot $bot) {
-            $replyText = $event->getText();
-            $bot->replyText($event->getReplyToken(), $replyText);
-        };
+        return $this->app->make('line.bot')
+            ->replyText($event->getReplyToken(), $event->getText());
     }
 }

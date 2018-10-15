@@ -45,32 +45,31 @@ class LineBotService
         return $request->header(HTTPHeader::LINE_SIGNATURE);
     }
 
-    public function replyMessage(CallbackContract $callback, Request $request)
-    {
-        $signature = $this->getSignature($request);
-
-        if (empty($signature)) {
-            return response('Bad Request', 400);
-        }
-        try {
-            /**
-             * @var LINEBot $lineBot
-             */
-            $lineBot = app('line.bot');
-
-            $events = $lineBot->parseEventRequest($request->getContent(), $signature);
-
-            foreach ($events as $event) {
-                $message = $callback->handler();
-                $message($event, $lineBot);
-            }
-        } catch (InvalidSignatureException $e) {
-            return response('Invalid signature', 400);
-        } catch (InvalidEventRequestException $e) {
-            return response("Invalid event request", 400);
-        }
-
-        return response('OK!', 200);
-
-    }
+//    public function replyMessage(CallbackContract $callback, Request $request)
+//    {
+//        $signature = $this->getSignature($request);
+//
+//        if (empty($signature)) {
+//            return response('Bad Request', 400);
+//        }
+//        try {
+//            /**
+//             * @var LINEBot $lineBot
+//             */
+//            $lineBot = app('line.bot');
+//
+//            $events = $lineBot->parseEventRequest($request->getContent(), $signature);
+//
+//            foreach ($events as $event) {
+//                event($event);
+//            }
+//        } catch (InvalidSignatureException $e) {
+//            return response('Invalid signature', 400);
+//        } catch (InvalidEventRequestException $e) {
+//            return response("Invalid event request", 400);
+//        }
+//
+//        return response('OK!', 200);
+//
+//    }
 }

@@ -29,14 +29,23 @@ class LineBotController extends Controller
     public function receive(Request $request, $userId)
     {
         try {
+            $signature = $this->service->getSignature($request);
 
-            $callback = $this->app->make('callback.manager')->getCallback($userId);
+            /**
+             * @var LINEBot $lineBot
+             */
+            $lineBot = app('line.bot');
 
-            $response = $this->service->replyMessage($callback, $request);
-        } catch (\Exception $e) {
-            var_dump($e->getFile());
-            var_dump($e->getLine());
-            var_dump($e->getMessage());
+            $events = $lineBot->parseEventRequest($request->getContent(), $signature);
+
+            foreach ($events as $event) {
+                $event->userId = $userId;
+                event($event);
+            }
+
+            $response = response('OK', 200);
+        } catch (\Exception $ex) {
+            logger($ex->getFile() . '@'. $ex->getLine() . ':' . $ex->getMessage());
 
             $response = response('there are something error!!', 400);
         }

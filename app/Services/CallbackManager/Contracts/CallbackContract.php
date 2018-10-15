@@ -8,9 +8,9 @@
 
 namespace App\Services\CallbackManager\Contracts;
 
-use LINE\LINEBot\Event\MessageEvent\TextMessage;
+use LINE\LINEBot\Event\MessageEvent;
 
 interface CallbackContract
 {
-    public function handler();
+    public function message(MessageEvent $event);
 }
