@@ -71,6 +71,6 @@ class WeatherCallback extends BaseCallback
             $weather = $data['weather'][0]['description'];
             array_push($list, implode(', ', [$date, $temperature, $weather]));
         }
-        return implode('\n', $list);
+        return implode(PHP_EOL, $list);
     }
 }
