@@ -64,7 +64,7 @@ class WeatherCallback extends BaseCallback
         $lat = intval($event->getLatitude());
         $lon = intval($event->getLongitude());
 
-        $url = "{$domain}?lat={$lat}&lon={$lon}&APPID={$apiKey}&units=metric";
+        $url = "{$domain}?lat={$lat}&lon={$lon}&APPID={$apiKey}&units=metric&cnt=10";
 
         $client = $this->getHttpClient();
         $request = new Request('GET', $url);
@@ -95,7 +95,7 @@ class WeatherCallback extends BaseCallback
                     ->setLayout(ComponentLayout::HORIZONTAL)
                     ->setContents([
                         TextComponentBuilder::builder()
-                            ->setText("未來五天天氣")
+                            ->setText("最近天氣預報")
                             ->setSize(ComponentFontSize::SM)
                             ->setWeight(ComponentFontWeight::BOLD)
                     ])
@@ -134,6 +134,8 @@ class WeatherCallback extends BaseCallback
                     ])
             );
 
-        return FlexMessageBuilder::builder()->setContents($container);
+        return FlexMessageBuilder::builder()
+            ->setAltText("")
+            ->setContents($container);
     }
 }
