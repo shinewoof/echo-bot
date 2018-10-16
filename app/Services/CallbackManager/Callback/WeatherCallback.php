@@ -14,6 +14,7 @@ use LINE\LINEBot\Constant\Flex\ComponentLayout;
 use LINE\LINEBot\Constant\Flex\ComponentSpacing;
 use LINE\LINEBot\Event\MessageEvent;
 use Exception;
+use LINE\LINEBot\Exception\CurlExecutionException;
 use LINE\LINEBot\MessageBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\BoxComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\ImageComponentBuilder;
@@ -40,16 +41,24 @@ class WeatherCallback extends BaseCallback
     /**
      * @param MessageEvent $event
      * @return \LINE\LINEBot\Response
+     * @throws Exception
      * @throws GuzzleException
      * @throws ReflectionException
      */
     public function location(MessageEvent $event)
     {
-        $response = $this->requestWeather($event);
-        $messageBuilder = $this->parseForecast5Day($response->getBody());
+        try {
+            $response = $this->requestWeather($event);
+            $messageBuilder = $this->parseForecast5Day($response->getBody());
 
-        return $this->app->make('line.bot')
-            ->replyMessage($event->getReplyToken(), $messageBuilder);
+            $response = $this->app->make('line.bot')
+                ->replyMessage($event->getReplyToken(), $messageBuilder);
+        } catch (GuzzleException $ex) {
+            throw new Exception('request weather error');
+        } catch (CurlExecutionException $ex) {
+            throw new Exception($ex->getMessage());
+        }
+
     }
 
     /**
