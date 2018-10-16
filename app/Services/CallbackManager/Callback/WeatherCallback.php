@@ -4,8 +4,23 @@ namespace App\Services\CallbackManager\Callback;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use LINE\LINEBot\Constant\Flex\ComponentAlign;
+use LINE\LINEBot\Constant\Flex\ComponentFontSize;
+use LINE\LINEBot\Constant\Flex\ComponentFontWeight;
+use LINE\LINEBot\Constant\Flex\ComponentGravity;
+use LINE\LINEBot\Constant\Flex\ComponentImageAspectMode;
+use LINE\LINEBot\Constant\Flex\ComponentImageAspectRatio;
+use LINE\LINEBot\Constant\Flex\ComponentLayout;
+use LINE\LINEBot\Constant\Flex\ComponentSpacing;
 use LINE\LINEBot\Event\MessageEvent;
 use Exception;
+use LINE\LINEBot\MessageBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\BoxComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\ImageComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\SeparatorComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\TextComponentBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\BubbleContainerBuilder;
+use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use ReflectionException;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -31,10 +46,10 @@ class WeatherCallback extends BaseCallback
     public function location(MessageEvent $event)
     {
         $response = $this->requestWeather($event);
-        $replyText = $this->parseForecast5Day($response->getBody());
+        $messageBuilder = $this->parseForecast5Day($response->getBody());
 
         return $this->app->make('line.bot')
-            ->replyText($event->getReplyToken(), $replyText);
+            ->replyMessage($event->getReplyToken(), $messageBuilder);
     }
 
     /**
@@ -58,19 +73,67 @@ class WeatherCallback extends BaseCallback
 
     /**
      * @param string $content
-     * @return string
+     * @return MessageBuilder
      */
-    protected function parseForecast5Day(string $content): string
+    protected function parseForecast5Day(string $content): MessageBuilder
     {
+        $images = [];
         $list = [];
         $content = json_decode($content, true);
 
         foreach ($content['list'] as $data) {
+            array_push($images, "https://openweathermap.org/img/w/{$data['weather'][0]['icon']}.png");
             $date = $data['dt_txt'];
             $temperature = $data['main']['temp'];
-            $weather = $data['weather'][0]['description'];
-            array_push($list, implode(', ', [$date, $temperature, $weather]));
+            array_push($list, $date, 'separator', $temperature, 'separator');
         }
-        return implode(PHP_EOL, $list);
+        array_pop($list);
+
+        $container = BubbleContainerBuilder::builder()
+            ->setHeader(
+                BoxComponentBuilder::builder()
+                    ->setLayout(ComponentLayout::HORIZONTAL)
+                    ->setContents([
+                        TextComponentBuilder::builder()
+                            ->setText("未來五天天氣")
+                            ->setSize(ComponentFontSize::SM)
+                            ->setWeight(ComponentFontWeight::BOLD)
+                    ])
+
+            )
+            ->setBody(
+                BoxComponentBuilder::builder()
+                    ->setLayout(ComponentLayout::HORIZONTAL)
+                    ->setSpacing(ComponentSpacing::MD)
+                    ->setContents([
+                        BoxComponentBuilder::builder()
+                            ->setLayout(ComponentLayout::VERTICAL)
+                            ->setFlex(1)
+                            ->setContents(array_map(function ($imageUrl) {
+                                return ImageComponentBuilder::builder()
+                                    ->setUrl($imageUrl)
+                                    ->setAlign(ComponentAlign::START)
+                                    ->setSize(ComponentFontSize::XS)
+                                    ->setAspectRatio(ComponentImageAspectRatio::R4TO3)
+                                    ->setAspectMode(ComponentImageAspectMode::COVER);
+                            }, $images)),
+                        BoxComponentBuilder::builder()
+                            ->setLayout(ComponentLayout::VERTICAL)
+                            ->setFlex(1)
+                            ->setContents(array_map(function ($text) {
+                                if ($text == 'separator') {
+                                    return SeparatorComponentBuilder::builder();
+                                }
+
+                                return TextComponentBuilder::builder()
+                                    ->setText($text)
+                                    ->setFlex(2)
+                                    ->setSize(ComponentFontSize::XS)
+                                    ->setGravity(ComponentGravity::TOP);
+                            }, $list)),
+                    ])
+            );
+
+        return FlexMessageBuilder::builder()->setContents($container);
     }
 }
