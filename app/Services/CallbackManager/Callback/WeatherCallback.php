@@ -46,8 +46,8 @@ class WeatherCallback extends BaseCallback
     {
         $apiKey = config('weather.api_key');
         $domain = config('weather.url.forecast');
-        $lat = urlencode($event->getLatitude());
-        $lon = urlencode($event->getLongitude());
+        $lat = intval($event->getLatitude());
+        $lon = intval($event->getLongitude());
 
         $url = "{$domain}?lat={$lat}&lon={$lon}&APPID={$apiKey}&units=metric";
 
