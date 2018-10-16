@@ -34,7 +34,7 @@ class TextEventListener
             $callback = app('callback.manager')->getCallback($event->userId);
             $callback->message($event);
         } catch (\Exception $ex) {
-            logger($ex->getFile() . '@'. $ex->getLine() . ':' . $ex->getMessage());
+            Log::debug($ex->getFile() . '@'. $ex->getLine() . ':' . $ex->getMessage());
 
             $this->app->make('line.bot')
                 ->replyText($event->getReplyToken(), '抱歉出了點問題!');
