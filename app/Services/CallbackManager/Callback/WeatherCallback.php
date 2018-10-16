@@ -4,6 +4,7 @@ namespace App\Services\CallbackManager\Callback;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\Constant\Flex\ComponentAlign;
 use LINE\LINEBot\Constant\Flex\ComponentFontSize;
 use LINE\LINEBot\Constant\Flex\ComponentFontWeight;
