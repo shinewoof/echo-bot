@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\LineBotService;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use LINE\LINEBot;
 use LINE\LINEBot\Exception\InvalidSignatureException;
 use LINE\LINEBot\Exception\InvalidEventRequestException;
@@ -45,7 +46,7 @@ class LineBotController extends Controller
 
             $response = response('OK', 200);
         } catch (\Exception $ex) {
-            logger($ex->getFile() . '@'. $ex->getLine() . ':' . $ex->getMessage());
+            Log::debug($ex->getFile() . '@'. $ex->getLine() . ':' . $ex->getMessage());
 
             $response = response('there are something error!!', 400);
         }
