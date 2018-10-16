@@ -84,7 +84,7 @@ class WeatherCallback extends BaseCallback
         foreach ($content['list'] as $data) {
             array_push($images, "https://openweathermap.org/img/w/{$data['weather'][0]['icon']}.png");
             $date = $data['dt_txt'];
-            $temperature = $data['main']['temp'];
+            $temperature = $data['main']['temp'] . "°C";
             array_push($list, $date, 'separator', $temperature, 'separator');
         }
         array_pop($list);
@@ -126,7 +126,7 @@ class WeatherCallback extends BaseCallback
                                 }
 
                                 return TextComponentBuilder::builder()
-                                    ->setText($text)
+                                    ->setText((string) $text)
                                     ->setFlex(2)
                                     ->setSize(ComponentFontSize::XS)
                                     ->setGravity(ComponentGravity::TOP);
