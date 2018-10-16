@@ -7,7 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use LINE\LINEBot\Event\MessageEvent;
 
-class TextEventListener
+class LocationEventListener
 {
     /**
      * Create the event listener.
@@ -32,7 +32,7 @@ class TextEventListener
              * @var CallbackContract $callback
              */
             $callback = app('callback.manager')->getCallback($event->userId);
-            $callback->message($event);
+            $callback->location($event);
         } catch (\Exception $ex) {
             logger($ex->getFile() . '@'. $ex->getLine() . ':' . $ex->getMessage());
 

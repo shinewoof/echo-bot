@@ -2,10 +2,11 @@
 namespace App\Services\CallbackManager\Callback;
 
 use App\Services\CallbackManager\Contracts\CallbackContract;
+use GuzzleHttp\Client;
 use Illuminate\Foundation\Application;
 use LINE\LINEBot\Event\MessageEvent;
 
-class BaseCallback implements CallbackContract
+abstract class BaseCallback implements CallbackContract
 {
     protected $app;
 
@@ -16,12 +17,11 @@ class BaseCallback implements CallbackContract
         $this->app = $app;
     }
 
-    /**
-     * @return boolean
-     */
-    public function message(MessageEvent $event)
+    public function getHttpClient()
     {
-        return $this->app->make('line.bot')
-            ->replyText($event->getReplyToken(), $event->getText());
+        return new Client();
     }
+
+    abstract public function message(MessageEvent $event);
+    abstract public function location(MessageEvent $event);
 }

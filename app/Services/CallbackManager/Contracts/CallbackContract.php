@@ -13,4 +13,5 @@ use LINE\LINEBot\Event\MessageEvent;
 interface CallbackContract
 {
     public function message(MessageEvent $event);
+    public function location(MessageEvent $event);
 }
