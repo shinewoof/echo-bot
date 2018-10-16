@@ -47,6 +47,7 @@ class WeatherCallback extends BaseCallback
      */
     public function location(MessageEvent $event)
     {
+        Log::debug('event start...');
         try {
             $response = $this->requestWeather($event);
             $messageBuilder = $this->parseForecast5Day($response->getBody());
@@ -57,6 +58,8 @@ class WeatherCallback extends BaseCallback
             throw new Exception('request weather error');
         } catch (CurlExecutionException $ex) {
             throw new Exception($ex->getMessage());
+        } finally {
+            Log::debug('event end...');
         }
 
     }
