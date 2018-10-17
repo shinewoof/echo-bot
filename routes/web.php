@@ -12,5 +12,7 @@
 */
 
 Route::get('/', function () {
+    Log::debug('event start...');
     echo "hello world";
+    Log::debug('event end...');
 });
