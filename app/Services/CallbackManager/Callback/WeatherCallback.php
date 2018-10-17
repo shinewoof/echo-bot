@@ -77,7 +77,7 @@ class WeatherCallback extends BaseCallback
         $lat = intval($event->getLatitude());
         $lon = intval($event->getLongitude());
 
-        $url = "{$domain}?lat={$lat}&lon={$lon}&APPID={$apiKey}&units=metric&cnt=1";
+        $url = "{$domain}?lat={$lat}&lon={$lon}&APPID={$apiKey}&units=metric&cnt=10";
 
         $client = $this->getHttpClient();
         $request = new Request('GET', $url);
