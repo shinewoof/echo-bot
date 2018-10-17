@@ -41,7 +41,9 @@ class LineBotController extends Controller
 
             foreach ($events as $event) {
                 $event->userId = $userId;
-                Log::info(serialize($event));
+                $info = (array) $event;
+                array_shift($info);
+                Log::info(json_encode($info));
                 event($event);
             }
 

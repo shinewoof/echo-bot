@@ -148,7 +148,7 @@ class WeatherCallback extends BaseCallback
             );
 
         return FlexMessageBuilder::builder()
-            ->setAltText("")
+            ->setAltText("flex message test")
             ->setContents($container);
     }
 }
